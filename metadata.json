@@ -1,0 +1,6 @@
+{
+  "name": "CampusConnect AI",
+  "description": "AI-Powered College Management Platform featuring intelligent student assistant, smart timetable, academic tracking, interactive campus navigation, grievance management, and AI study buddy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
