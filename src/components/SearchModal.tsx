@@ -2,35 +2,34 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
   X, 
-  MapPin, 
   Calendar, 
+  FileCheck2, 
+  Users, 
   Bell, 
   Sparkles, 
-  AlertCircle, 
-  ArrowRight,
-  BookOpen
+  ArrowRight 
 } from 'lucide-react';
-import { NavigationTab } from '../types';
-import { 
-  CAMPUS_LOCATIONS, 
-  TIMETABLE_CLASSES, 
-  ANNOUNCEMENTS, 
-  INITIAL_GRIEVANCES 
-} from '../data/mockData';
+import { NavigationTab, ClassSession, MidSemExam, FacultyMember, NoticeItem } from '../types';
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (tab: NavigationTab) => void;
-  onSelectLocation?: (locId: string) => void;
-  onSelectNotice?: (noticeId: string) => void;
+  classes: ClassSession[];
+  exams: MidSemExam[];
+  faculty: FacultyMember[];
+  notices: NoticeItem[];
+  onSelectNotice?: (id: string) => void;
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
   onNavigate,
-  onSelectLocation,
+  classes,
+  exams,
+  faculty,
+  notices,
   onSelectNotice,
 }) => {
   const [query, setQuery] = useState('');
@@ -44,13 +43,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     }
   }, [isOpen]);
 
-  // Global keydown handler for ESC and Cmd+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        // toggle modal handled in parent
-      }
       if (e.key === 'Escape' && isOpen) {
         onClose();
       }
@@ -63,51 +57,51 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
   const q = query.toLowerCase().trim();
 
-  // Search Results
-  const matchingLocations = q
-    ? CAMPUS_LOCATIONS.filter(l => 
-        l.name.toLowerCase().includes(q) || 
-        l.code.toLowerCase().includes(q) ||
-        l.keyFacilities.some(f => f.toLowerCase().includes(q))
+  const matchingClasses = q
+    ? classes.filter(c =>
+        c.subjectName.toLowerCase().includes(q) ||
+        c.subjectCode.toLowerCase().includes(q) ||
+        c.facultyName.toLowerCase().includes(q) ||
+        c.classroom.toLowerCase().includes(q)
       ).slice(0, 3)
     : [];
 
-  const matchingClasses = q
-    ? TIMETABLE_CLASSES.filter(c =>
-        c.courseCode.toLowerCase().includes(q) ||
-        c.courseName.toLowerCase().includes(q) ||
-        c.instructor.toLowerCase().includes(q) ||
-        c.room.toLowerCase().includes(q)
+  const matchingExams = q
+    ? exams.filter(e =>
+        e.subjectName.toLowerCase().includes(q) ||
+        e.subjectCode.toLowerCase().includes(q) ||
+        e.dateDisplay.toLowerCase().includes(q) ||
+        e.blockLocation.toLowerCase().includes(q)
+      ).slice(0, 3)
+    : [];
+
+  const matchingFaculty = q
+    ? faculty.filter(f =>
+        f.name.toLowerCase().includes(q) ||
+        f.subjects.some(s => s.toLowerCase().includes(q)) ||
+        f.cabin.toLowerCase().includes(q)
       ).slice(0, 3)
     : [];
 
   const matchingNotices = q
-    ? ANNOUNCEMENTS.filter(a =>
-        a.title.toLowerCase().includes(q) ||
-        a.category.toLowerCase().includes(q) ||
-        a.content.toLowerCase().includes(q)
+    ? notices.filter(n =>
+        n.title.toLowerCase().includes(q) ||
+        n.category.toLowerCase().includes(q) ||
+        n.content.toLowerCase().includes(q)
       ).slice(0, 3)
     : [];
 
-  const matchingGrievances = q
-    ? INITIAL_GRIEVANCES.filter(g =>
-        g.ticketNumber.toLowerCase().includes(q) ||
-        g.title.toLowerCase().includes(q) ||
-        g.category.toLowerCase().includes(q)
-      ).slice(0, 2)
-    : [];
-
   const hasResults = 
-    matchingLocations.length > 0 || 
     matchingClasses.length > 0 || 
-    matchingNotices.length > 0 || 
-    matchingGrievances.length > 0;
+    matchingExams.length > 0 || 
+    matchingFaculty.length > 0 || 
+    matchingNotices.length > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
@@ -115,14 +109,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-10 animate-in zoom-in-95 duration-150">
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3.5 border-b border-slate-100">
-          <Search className="w-5 h-5 text-indigo-600 mr-3 shrink-0" />
+          <Search className="w-5 h-5 text-blue-700 mr-3 shrink-0" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search classes, rooms, circulars, lab facilities, or ask AI..."
+            placeholder="Search lectures, BEE, Maths, exam dates, Room 3206, faculty cabins..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full text-slate-800 placeholder-slate-400 bg-transparent text-base outline-none font-medium"
+            className="w-full text-slate-800 placeholder-slate-400 bg-transparent text-sm sm:text-base outline-none font-semibold"
           />
           {query ? (
             <button 
@@ -132,7 +126,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-block px-2 py-0.5 text-[11px] font-semibold text-slate-400 bg-slate-100 border border-slate-200 rounded-md mr-2">
+            <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 rounded-md mr-2">
               ESC
             </kbd>
           )}
@@ -147,120 +141,115 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         {/* Results Body */}
         <div className="max-h-[60vh] overflow-y-auto p-4 space-y-4">
           {!q ? (
-            // Suggested Quick Actions
             <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 px-2">
-                Quick Shortcuts & AI Prompts
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2">
+                Quick Shortcuts & Academic Inquiries
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    onNavigate('timetable');
+                    onClose();
+                  }}
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-blue-50/70 hover:bg-blue-100/70 text-blue-900 border border-blue-200 transition-colors"
+                >
+                  <div className="p-2 rounded-lg bg-blue-700 text-white shrink-0">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold">Room 3206 Regular Timetable</p>
+                    <p className="text-[11px] text-blue-700">Monday to Friday lectures</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    onNavigate('midsem');
+                    onClose();
+                  }}
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-amber-50/70 hover:bg-amber-100/70 text-amber-900 border border-amber-200 transition-colors"
+                >
+                  <div className="p-2 rounded-lg bg-amber-600 text-white shrink-0">
+                    <FileCheck2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold">Oct 2026 Mid-Sem Datesheet</p>
+                    <p className="text-[11px] text-amber-700">Exam schedule & countdown</p>
+                  </div>
+                </button>
+
                 <button
                   onClick={() => {
                     onNavigate('assistant');
                     onClose();
                   }}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-indigo-50/70 hover:bg-indigo-100/70 text-indigo-900 border border-indigo-100 transition-colors group"
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-indigo-50/70 hover:bg-indigo-100/70 text-indigo-900 border border-indigo-200 transition-colors"
                 >
-                  <div className="p-2 rounded-lg bg-indigo-600 text-white shrink-0 shadow-xs">
+                  <div className="p-2 rounded-lg bg-indigo-700 text-white shrink-0">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Ask Gemini Campus Concierge</p>
-                    <p className="text-xs text-indigo-600/80">Campus policies, rules, and questions</p>
+                    <p className="text-xs font-bold">Ask Gemini Campus Concierge</p>
+                    <p className="text-[11px] text-indigo-700">Timetable & faculty QA</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => {
-                    onNavigate('study-buddy');
+                    onNavigate('faculty');
                     onClose();
                   }}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-purple-50/70 hover:bg-purple-100/70 text-purple-900 border border-purple-100 transition-colors group"
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-slate-100/70 hover:bg-slate-200/70 text-slate-900 border border-slate-200 transition-colors"
                 >
-                  <div className="p-2 rounded-lg bg-purple-600 text-white shrink-0 shadow-xs">
-                    <BookOpen className="w-4 h-4" />
+                  <div className="p-2 rounded-lg bg-slate-800 text-white shrink-0">
+                    <Users className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Generate AI Quiz or Summarize</p>
-                    <p className="text-xs text-purple-600/80">Instant study material with AI</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    onNavigate('campus');
-                    onClose();
-                  }}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-900 border border-emerald-100 transition-colors group"
-                >
-                  <div className="p-2 rounded-lg bg-emerald-600 text-white shrink-0 shadow-xs">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">Campus Route Finder</p>
-                    <p className="text-xs text-emerald-600/80">Walk directions to labs & library</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    onNavigate('grievance');
-                    onClose();
-                  }}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-amber-50/70 hover:bg-amber-100/70 text-amber-900 border border-amber-100 transition-colors group"
-                >
-                  <div className="p-2 rounded-lg bg-amber-600 text-white shrink-0 shadow-xs">
-                    <AlertCircle className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">File Grievance / Complaint</p>
-                    <p className="text-xs text-amber-600/80">Track facility or academic issues</p>
+                    <p className="text-xs font-bold">Faculty Cabins & Office Hours</p>
+                    <p className="text-[11px] text-slate-600">Browse subject professors</p>
                   </div>
                 </button>
               </div>
             </div>
           ) : hasResults ? (
             <div className="space-y-4">
-              {/* Campus Locations */}
-              {matchingLocations.length > 0 && (
+              {/* Mid Sem Exams */}
+              {matchingExams.length > 0 && (
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mb-1.5 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Campus Buildings & Labs ({matchingLocations.length})</span>
-                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 px-2 mb-1.5 flex items-center gap-1">
+                    <FileCheck2 className="w-3.5 h-3.5" />
+                    Mid-Sem Progressive Assessment Schedule ({matchingExams.length})
+                  </span>
                   <div className="space-y-1">
-                    {matchingLocations.map((loc) => (
+                    {matchingExams.map((ex) => (
                       <button
-                        key={loc.id}
+                        key={ex.id}
                         onClick={() => {
-                          onNavigate('campus');
-                          if (onSelectLocation) onSelectLocation(loc.id);
+                          onNavigate('midsem');
                           onClose();
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-indigo-50/60 text-left transition-colors group"
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-amber-50 text-left transition-colors group"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-indigo-100 text-indigo-700">
-                            <MapPin className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800 group-hover:text-indigo-600">{loc.name}</p>
-                            <p className="text-xs text-slate-500">{loc.code} • {loc.floors} Floors • {loc.timing}</p>
-                          </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-amber-800">{ex.subjectName}</p>
+                          <p className="text-[11px] text-slate-500">{ex.dateDisplay} ({ex.day}) • {ex.startTime} - {ex.endTime} • {ex.blockLocation}</p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                          {ex.durationMins} Mins
+                        </span>
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Classes */}
+              {/* Regular Classes */}
               {matchingClasses.length > 0 && (
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mb-1.5 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-purple-600" />
-                    <span>Classes & Timetable ({matchingClasses.length})</span>
-                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 px-2 mb-1.5 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Regular Timetable ({matchingClasses.length})
+                  </span>
                   <div className="space-y-1">
                     {matchingClasses.map((cls) => (
                       <button
@@ -269,20 +258,41 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                           onNavigate('timetable');
                           onClose();
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-purple-50/60 text-left transition-colors group"
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50 text-left transition-colors group"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-purple-100 text-purple-700">
-                            <Calendar className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-600">{cls.courseCode}: {cls.courseName}</p>
-                            <p className="text-xs text-slate-500">{cls.day} {cls.startTime} - {cls.endTime} • {cls.room} ({cls.instructor})</p>
-                          </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-blue-800">{cls.subjectCode}: {cls.subjectName}</p>
+                          <p className="text-[11px] text-slate-500">{cls.day} {cls.startTime}-{cls.endTime} • {cls.classroom} (Faculty: {cls.facultyName})</p>
                         </div>
-                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                          {cls.type}
-                        </span>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-700" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Faculty */}
+              {matchingFaculty.length > 0 && (
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 px-2 mb-1.5 flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5" />
+                    Faculty Directory ({matchingFaculty.length})
+                  </span>
+                  <div className="space-y-1">
+                    {matchingFaculty.map((fac) => (
+                      <button
+                        key={fac.id}
+                        onClick={() => {
+                          onNavigate('faculty');
+                          onClose();
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 text-left transition-colors group"
+                      >
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">{fac.name}</p>
+                          <p className="text-[11px] text-slate-500">{fac.designation} • Cabin: {fac.cabin}</p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-800" />
                       </button>
                     ))}
                   </div>
@@ -292,10 +302,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Notices */}
               {matchingNotices.length > 0 && (
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mb-1.5 flex items-center gap-1.5">
-                    <Bell className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Circulars & Announcements ({matchingNotices.length})</span>
-                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 px-2 mb-1.5 flex items-center gap-1">
+                    <Bell className="w-3.5 h-3.5" />
+                    Circulars & Notices ({matchingNotices.length})
+                  </span>
                   <div className="space-y-1">
                     {matchingNotices.map((ntc) => (
                       <button
@@ -305,57 +315,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                           if (onSelectNotice) onSelectNotice(ntc.id);
                           onClose();
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-rose-50/60 text-left transition-colors group"
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-rose-50 text-left transition-colors group"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-rose-100 text-rose-700">
-                            <Bell className="w-4 h-4" />
-                          </div>
-                          <div className="max-w-md">
-                            <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-rose-600">{ntc.title}</p>
-                            <p className="text-xs text-slate-500">{ntc.category} • {ntc.date}</p>
-                          </div>
+                        <div className="max-w-md">
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-rose-800 truncate">{ntc.title}</p>
+                          <p className="text-[11px] text-slate-500">{ntc.category} • {ntc.date}</p>
                         </div>
-                        {ntc.isUrgent && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">
-                            Urgent
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Grievances */}
-              {matchingGrievances.length > 0 && (
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mb-1.5 flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Grievance Tickets ({matchingGrievances.length})</span>
-                  </div>
-                  <div className="space-y-1">
-                    {matchingGrievances.map((grv) => (
-                      <button
-                        key={grv.id}
-                        onClick={() => {
-                          onNavigate('grievance');
-                          onClose();
-                        }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-amber-50/60 text-left transition-colors group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-amber-100 text-amber-700">
-                            <AlertCircle className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800 group-hover:text-amber-600">[{grv.ticketNumber}] {grv.title}</p>
-                            <p className="text-xs text-slate-500">{grv.category} • Status: {grv.status}</p>
-                          </div>
-                        </div>
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                          {grv.status}
-                        </span>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-rose-700" />
                       </button>
                     ))}
                   </div>
@@ -364,33 +330,26 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             </div>
           ) : (
             <div className="text-center py-8">
-              <Search className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-600">No matching campus records found for "{query}"</p>
-              <p className="text-xs text-slate-400 mt-1">Try searching for "Lab", "Library", "CS501", or "Attendance"</p>
+              <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-xs font-bold text-slate-600">No records found for "{query}"</p>
               <button
                 onClick={() => {
                   onNavigate('assistant');
                   onClose();
                 }}
-                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                className="mt-3 px-3.5 py-1.5 rounded-xl bg-blue-700 text-white text-xs font-bold hover:bg-blue-600 transition-colors inline-flex items-center gap-1.5"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Ask Gemini Assistant instead
+                Ask AI Assistant instead
               </button>
             </div>
           )}
         </div>
 
         {/* Footer info */}
-        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center gap-2">
-            <span>Navigation:</span>
-            <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-semibold text-slate-600">↑↓</kbd>
-            <span>to navigate</span>
-            <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-semibold text-slate-600">Enter</kbd>
-            <span>to select</span>
-          </div>
-          <span className="font-medium text-indigo-600">CampusConnect AI Search</span>
+        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span>GEC Bharuch Academic Indexer</span>
+          <span>Press ESC to dismiss</span>
         </div>
       </div>
     </div>

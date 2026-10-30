@@ -1,61 +1,98 @@
 export type NavigationTab = 
   | 'dashboard' 
-  | 'assistant' 
   | 'timetable' 
+  | 'midsem'
+  | 'assistant' 
+  | 'faculty' 
   | 'notices' 
-  | 'campus' 
-  | 'grievance' 
-  | 'study-buddy'
+  | 'admin'
   | 'landing';
+
+export type DepartmentName = 
+  | 'Computer Engineering'
+  | 'Mechanical Engineering'
+  | 'Electrical Engineering'
+  | 'Chemical Engineering'
+  | 'Civil Engineering'
+  | 'Electronics & Communication';
+
+export interface BranchFilterState {
+  department: DepartmentName;
+  semester: number;
+  academicYear: string;
+  division: string;
+  classroom: string;
+}
 
 export interface StudentProfile {
   id: string;
   name: string;
-  rollNumber: string;
-  department: string;
-  program: string;
+  enrollmentNumber: string;
+  collegeName: string;
+  department: DepartmentName;
   semester: number;
-  section: string;
+  division: string;
+  classroom: string;
   email: string;
   avatarUrl: string;
-  cgpa: number;
-  overallAttendance: number;
+  currentAttendance: number;
   totalCredits: number;
-  earnedCredits: number;
 }
 
 export interface ClassSession {
   id: string;
-  courseCode: string;
-  courseName: string;
-  instructor: string;
-  room: string;
-  building: string;
-  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
-  startTime: string; // e.g. "09:00"
-  endTime: string;   // e.g. "10:30"
-  type: 'Lecture' | 'Lab' | 'Tutorial' | 'Seminar';
-  color: string;
+  lectureNumber: number;
+  startTime: string; // "10:30"
+  endTime: string;   // "11:30"
+  subjectCode: string;
+  subjectName: string;
+  facultyName: string;
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday';
+  type: 'Lecture' | 'Lab' | 'Tutorial' | 'Break';
+  classroom: string;
+  batch?: 'All' | 'Batch A' | 'Batch B' | 'Batch C';
+  colorTag?: string;
+  isVerified?: boolean;
 }
 
-export interface SubjectAttendance {
+export interface MidSemExam {
   id: string;
-  courseCode: string;
-  courseName: string;
-  attended: number;
-  total: number;
-  percentage: number;
-  faculty: string;
-  status: 'safe' | 'warning' | 'critical';
+  dateStr: string;   // "2026-10-27"
+  dateDisplay: string; // "27 October 2026"
+  day: string;       // "Monday"
+  startTime: string; // "11:00 AM"
+  endTime: string;   // "12:30 PM" or "12:15 PM"
+  durationMins: number; // 90 for Math-I, 75 for others
+  subjectCode: string;
+  subjectName: string;
+  department: DepartmentName;
+  semester: number;
+  syllabusOverview: string[];
+  blockLocation: string;
+  isVerified: boolean;
 }
 
-export interface Announcement {
+export interface FacultyMember {
+  id: string;
+  name: string;
+  designation: string;
+  department: string;
+  cabin: string;
+  email: string;
+  contactExt?: string;
+  subjects: string[];
+  qualification: string;
+  consultationHours: string;
+  avatarUrl: string;
+  isVerified: boolean;
+}
+
+export interface NoticeItem {
   id: string;
   title: string;
-  category: 'Academic' | 'Examinations' | 'Events & Hackathons' | 'Placements' | 'Hostel & Transport';
+  category: 'Academic' | 'Examination' | 'GTU Circular' | 'Events & Sports' | 'Administrative';
   date: string;
-  publisher: string;
-  publisherRole: string;
+  issuedBy: string;
   isUrgent?: boolean;
   content: string;
   attachmentName?: string;
@@ -63,62 +100,13 @@ export interface Announcement {
   read: boolean;
 }
 
-export interface CampusLocation {
-  id: string;
-  name: string;
-  code: string;
-  category: 'Academic' | 'Administrative' | 'Recreation' | 'Food' | 'Hostel' | 'Utility';
-  coordinates: { x: number; y: number }; // percentage on map (0-100)
-  floors: number;
-  description: string;
-  keyFacilities: string[];
-  headOrContact: string;
-  timing: string;
-  image: string;
-}
-
-export type GrievanceStatus = 'Submitted' | 'Under Review' | 'In Progress' | 'Resolved' | 'Escalated';
-export type GrievancePriority = 'Low' | 'Medium' | 'High' | 'Urgent';
-
-export interface GrievanceTimelineEvent {
-  date: string;
-  title: string;
-  note: string;
-  by: string;
-}
-
-export interface GrievanceTicket {
-  id: string;
-  ticketNumber: string;
-  title: string;
-  category: 'Academic' | 'Hostel & Mess' | 'Infrastructure & WiFi' | 'Library' | 'Transport' | 'Administrative';
-  priority: GrievancePriority;
-  status: GrievanceStatus;
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-  location?: string;
-  assignedTo: string;
-  isAnonymous: boolean;
-  timeline: GrievanceTimelineEvent[];
-}
-
-export interface QuizQuestion {
-  question: string;
-  options: string[];
-  answerIndex: number;
-  explanation: string;
-}
-
-export interface Flashcard {
-  front: string;
-  back: string;
-}
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
   text: string;
   timestamp: string;
-  suggestedActions?: string[];
+  sourceVerified?: boolean;
 }
+
+
+

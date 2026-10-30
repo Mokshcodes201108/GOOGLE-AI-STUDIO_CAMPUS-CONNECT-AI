@@ -160,8 +160,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 
         {/* Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
-          <p className="text-[11px] text-slate-400">
-            Automated campus alerts by CampusConnect AI
+          <p className="text-[11px] text-slate-500 font-semibold">
+            Government Engineering College, Bharuch • GTU Academic Notices
           </p>
         </div>
       </div>

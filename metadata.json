@@ -1,6 +1,6 @@
 {
-  "name": "CampusConnect AI",
-  "description": "AI-Powered College Management Platform featuring intelligent student assistant, smart timetable, academic tracking, interactive campus navigation, grievance management, and AI study buddy.",
+  "name": "GEC BHARUCH – CAMPUS CONNECT",
+  "description": "Centralized academic timetable, mid-sem examination schedule, AI campus assistant, and notice management platform for Government Engineering College, Bharuch, Gujarat.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

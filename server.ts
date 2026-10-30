@@ -31,17 +31,67 @@ if (apiKey) {
   console.warn('GEMINI_API_KEY is not defined. AI endpoints will run in fallback simulation mode.');
 }
 
-const COLLEGE_SYSTEM_PROMPT = `You are "CampusConnect AI", the official intelligent campus concierge and academic advisor for Apex Institute of Science & Technology (AIST).
-You have deep knowledge of the campus:
-- Departments: Computer Science & Engineering (Block A), AI & Data Science (Block B), Electronics & Communication (Block C), Mechanical Engineering (Block D), and School of Management (Block E).
-- Facilities: Central Library (Floor 1-3, open 8:00 AM - 10:00 PM), Innovation Lab (Block B, 4th Fl), Cafeteria (Student Plaza), Sports Complex & Gym, Health Clinic (Near Gate 2), Placement & Training Cell (Admin Block, 2nd Fl).
-- Timetable & Classes: Morning sessions 9:00 AM - 12:45 PM, Lunch 12:45 - 1:45 PM, Afternoon practicals/electives 1:45 - 4:45 PM.
-- Attendance Policy: Minimum 75% mandatory attendance required to qualify for end-semester examinations.
-- Grievance & Student Support: Grievance cell responds within 24-48 hours. Dean of Student Affairs: Dr. Eleanor Vance (Admin Block 104).
-- Transport: Shuttle bus operates every 20 mins connecting North Gate, Metro Station, City Center, and South Dorms.
-- WiFi & Tech: 'AIST-Student-5G', login with Student ID credentials. IT Helpdesk at Block A, Room 102.
+const COLLEGE_SYSTEM_PROMPT = `You are the official AI Academic Assistant for "GEC BHARUCH – CAMPUS CONNECT" at Government Engineering College, Bharuch (Gujarat, India), affiliated with Gujarat Technological University (GTU).
 
-Personality: Professional, encouraging, clear, concise, and deeply helpful. Format answers with clear bullet points or bold highlights when appropriate.`;
+Your primary role is to give students and faculty instant, 100% accurate information about regular timetables, mid-semester examination schedules, faculty details, and campus notices without forcing them to search through messy WhatsApp photos and circular PDFs.
+
+VERIFIED TIMETABLE DATA SOURCE (Semester 1, Computer Engineering - Classroom 3206):
+- Classroom: Room 3206 (3rd Floor, Academic Block 3).
+- Weekly Schedule: Monday to Friday.
+  * Lecture 1 (10:30 AM - 11:30 AM):
+    - Monday: Mathematics-I (Prof. Dr. R. K. Patel)
+    - Tuesday: Basic Electrical Engineering [BEE] (Prof. H. N. Solanki)
+    - Wednesday: Programming for Problem Solving [PPS] (Prof. M. P. Shah)
+    - Thursday: Mathematics-I (Prof. Dr. R. K. Patel)
+    - Friday: Basic Electrical Engineering [BEE] (Prof. H. N. Solanki)
+  * Lecture 2 (11:30 AM - 12:30 PM):
+    - Monday: Programming for Problem Solving [PPS] (Prof. M. P. Shah)
+    - Tuesday: Mathematics-I (Prof. Dr. R. K. Patel)
+    - Wednesday: Basic Electrical Engineering [BEE] (Prof. H. N. Solanki)
+    - Thursday: Programming for Problem Solving [PPS] (Prof. M. P. Shah)
+    - Friday: Mathematics-I (Prof. Dr. R. K. Patel)
+  * Recess / Break: 12:30 PM - 01:00 PM (Daily Lunch Recess)
+  * Lecture 3 (01:00 PM - 02:00 PM):
+    - Monday: Engineering Graphics & Design [EGD] (Prof. K. S. Parmar)
+    - Tuesday: Environmental Sciences [EVS] (Prof. S. B. Dave)
+    - Wednesday: Mathematics-I (Prof. Dr. R. K. Patel)
+    - Thursday: Basic Electrical Engineering [BEE] (Prof. H. N. Solanki)
+    - Friday: Programming for Problem Solving [PPS] (Prof. M. P. Shah)
+  * Lecture 4 (02:00 PM - 03:00 PM):
+    - Monday: Environmental Sciences [EVS] (Prof. S. B. Dave)
+    - Tuesday: Programming for Problem Solving [PPS] (Prof. M. P. Shah)
+    - Wednesday: Induction Program / English (Prof. N. J. Mehta)
+    - Thursday: Engineering Graphics & Design [EGD] (Prof. K. S. Parmar)
+    - Friday: Environmental Sciences [EVS] (Prof. S. B. Dave)
+  * Short Break: 03:00 PM - 03:15 PM
+  * Lecture 5 & 6 (03:15 PM - 05:15 PM - Practical Lab / Drawing Sessions):
+    - Monday: Batch A: PPS Lab (Lab 3208) | Batch B: BEE Lab (Electrical Block) | Batch C: EGD Hall (Drawing Hall 2)
+    - Tuesday: Batch B: PPS Lab (Lab 3208) | Batch C: BEE Lab (Electrical Block) | Batch A: EGD Hall (Drawing Hall 2)
+    - Wednesday: Batch C: PPS Lab (Lab 3208) | Batch A: BEE Lab (Electrical Block) | Batch B: EGD Hall (Drawing Hall 2)
+    - Thursday: Remedial & Tutorial / Library Study Session (Room 3206)
+    - Friday: Sports / N.S.S. / Club Activities
+
+VERIFIED MID-SEM (PROGRESSIVE ASSESSMENT) EXAMINATION SCHEDULE (October / November 2026):
+- Monday, 27 October 2026: Mathematics-I (3110014) | Timing: 11:00 AM – 12:30 PM (90 Mins)
+- Tuesday, 28 October 2026: Basic Electrical Engineering [BEE] (3110005) | Timing: 11:00 AM – 12:15 PM (75 Mins)
+- Wednesday, 29 October 2026: Programming for Problem Solving [PPS] (3110003) | Timing: 11:00 AM – 12:15 PM (75 Mins)
+- Thursday, 30 October 2026: Engineering Graphics & Design [EGD] (3110013) | Timing: 11:00 AM – 12:15 PM (75 Mins)
+- Monday, 02 November 2026: Environmental Sciences [EVS] (3110007) | Timing: 11:00 AM – 12:15 PM (75 Mins)
+- Tuesday, 03 November 2026: Induction / Humanities Elective | Timing: 11:00 AM – 12:15 PM (75 Mins)
+
+VERIFIED FACULTY DIRECTORY (Semester 1 Computer Engineering):
+- Mathematics-I: Prof. Dr. R. K. Patel (Head/Assoc. Professor, General Dept, Cabin G-102)
+- Basic Electrical Engineering (BEE): Prof. H. N. Solanki (Asst. Professor, Electrical Dept, Cabin E-204)
+- Programming for Problem Solving (PPS): Prof. M. P. Shah (Asst. Professor, Computer Dept, Cabin C-305) & Prof. D. A. Vora
+- Engineering Graphics & Design (EGD): Prof. K. S. Parmar (Asst. Professor, Mech Dept, Cabin M-108)
+- Environmental Sciences: Prof. S. B. Dave (Asst. Professor, General Dept, Cabin G-104)
+- English & Induction: Prof. N. J. Mehta (Asst. Professor, Cabin G-106)
+
+CRITICAL INSTRUCTIONS:
+1. Always be polite, encouraging, precise, and professional.
+2. NEVER invent or hallucinate faculty names, classroom numbers, or exam timings. Stick strictly to the verified data above.
+3. If the user asks about other branches or unverified semesters (like Sem 3 Mechanical), clarify that Semester 1 Computer Engineering (Room 3206) is the verified schedule currently active on Campus Connect, and advise checking the Admin Panel or physical notice board for others.
+4. When asked "What is my next lecture?" or "What is my timetable for Wednesday?", answer with clear bullet points including start time, end time, subject, and faculty.`;
 
 // AI Assistant Chat endpoint
 app.post('/api/chat', async (req: Request, res: Response) => {
@@ -53,10 +103,24 @@ app.post('/api/chat', async (req: Request, res: Response) => {
     }
 
     if (!ai) {
-      // High quality realistic simulated response if no API key is injected yet
-      res.json({
-        reply: `[CampusConnect AI]: Thank you for asking about "${message}". In our campus records, Central Library is open until 10:00 PM, attendance requirement is 75% minimum, and the next mid-term schedule is available under Academic Updates. If you need immediate assistance with course enrollment or room bookings, visit Admin Block Room 104 or consult your academic advisor.`,
-      });
+      const q = message.toLowerCase();
+      let reply = '';
+      if (q.includes('next lecture') || q.includes('next class')) {
+        reply = `**Next Lecture for Semester 1 (Computer Engineering, Room 3206):**\n\n• Today's upcoming lecture is **Mathematics-I (3110014)** with **Prof. Dr. R. K. Patel** (10:30 AM – 11:30 AM in Classroom 3206), followed by **Basic Electrical Engineering** with **Prof. H. N. Solanki** (11:30 AM – 12:30 PM).\n\n*Classroom: 3206 (3rd Floor, Academic Block 3).*`;
+      } else if (q.includes('math') || q.includes('calculus')) {
+        reply = `**Mathematics-I (Calculus) Details:**\n\n• **Faculty:** Prof. Dr. R. K. Patel (Associate Professor & Head, Cabin G-102)\n• **Mid-Sem Exam Date:** Monday, 27 October 2026\n• **Exam Timing:** 11:00 AM – 12:30 PM (**90 Minutes** duration)\n• **Regular Theory Venue:** Classroom 3206`;
+      } else if (q.includes('bee') || q.includes('electrical')) {
+        reply = `**Basic Electrical Engineering (BEE - 3110005):**\n\n• **Faculty:** Prof. H. N. Solanki (Assistant Professor, Electrical Dept, Cabin E-204)\n• **Mid-Sem Exam Date:** Tuesday, 28 October 2026 (11:00 AM – 12:15 PM, 75 mins)\n• **Practical Lab:** Electrical Machines & Measurement Lab (Electrical Block Ground Floor)`;
+      } else if (q.includes('wednesday')) {
+        reply = `**Wednesday Timetable for Semester 1 Computer Engineering (Room 3206):**\n\n1. **10:30 AM – 11:30 AM:** Programming for Problem Solving [PPS] – Prof. M. P. Shah\n2. **11:30 AM – 12:30 PM:** Basic Electrical Engineering [BEE] – Prof. H. N. Solanki\n3. **12:30 PM – 01:00 PM:** Lunch Recess\n4. **01:00 PM – 02:00 PM:** Mathematics-I – Prof. Dr. R. K. Patel\n5. **02:00 PM – 03:00 PM:** Induction Program / English – Prof. N. J. Mehta\n6. **03:00 PM – 03:15 PM:** Short Tea Break\n7. **03:15 PM – 05:15 PM:** Practical Lab Session:\n   - Batch C: PPS Lab (Lab 3208)\n   - Batch A: BEE Lab (Electrical Block)\n   - Batch B: EGD Hall (Drawing Hall 2)`;
+      } else if (q.includes('exam') || q.includes('mid-sem') || q.includes('progressive')) {
+        reply = `**October 2026 Mid-Semester (Progressive Assessment) Schedule:**\n\n• **27 Oct 2026 (Mon):** Mathematics-I (11:00 AM – 12:30 PM, 90 mins)\n• **28 Oct 2026 (Tue):** Basic Electrical Engineering (11:00 AM – 12:15 PM, 75 mins)\n• **29 Oct 2026 (Wed):** Programming for Problem Solving (11:00 AM – 12:15 PM, 75 mins)\n• **30 Oct 2026 (Thu):** Engineering Graphics & Design (11:00 AM – 12:15 PM, 75 mins)\n• **02 Nov 2026 (Mon):** Environmental Sciences (11:00 AM – 12:15 PM, 75 mins)\n• **03 Nov 2026 (Tue):** Induction / English Elective (11:00 AM – 12:15 PM, 75 mins)\n\n*Seating arrangement is in Classroom 3206 and Block 3 Examination Halls.*`;
+      } else if (q.includes('faculty') || q.includes('teacher') || q.includes('prof')) {
+        reply = `**Key Faculty for Semester 1 (Room 3206):**\n\n• **Mathematics-I:** Prof. Dr. R. K. Patel (Cabin G-102)\n• **Basic Electrical Engineering:** Prof. H. N. Solanki (Cabin E-204)\n• **Programming for Problem Solving:** Prof. M. P. Shah (Cabin C-305) & Prof. D. A. Vora\n• **Engineering Graphics & Design:** Prof. K. S. Parmar (Cabin M-108)\n• **Environmental Sciences:** Prof. S. B. Dave (Cabin G-104)\n• **English & Induction:** Prof. N. J. Mehta (Cabin G-106)`;
+      } else {
+        reply = `**GEC Bharuch Academic Assistant:**\n\nYou asked: "${message}".\n\nFor B.E. Semester 1 Computer Engineering, all regular lectures are held in **Classroom 3206**. The Mid-Semester Progressive Assessment starts **27th October 2026** (Maths-I: 11:00 AM–12:30 PM; other subjects: 11:00 AM–12:15 PM). You can ask me about your next lecture, any day's timetable, or faculty contact details.`;
+      }
+      res.json({ reply });
       return;
     }
 
