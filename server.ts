@@ -93,6 +93,29 @@ CRITICAL INSTRUCTIONS:
 3. If the user asks about other branches or unverified semesters (like Sem 3 Mechanical), clarify that Semester 1 Computer Engineering (Room 3206) is the verified schedule currently active on Campus Connect, and advise checking the Admin Panel or physical notice board for others.
 4. When asked "What is my next lecture?" or "What is my timetable for Wednesday?", answer with clear bullet points including start time, end time, subject, and faculty.`;
 
+function getGroundedCollegeFallback(message: string): string {
+  const q = message.toLowerCase();
+  if (q.includes('next lecture') || q.includes('next class')) {
+    return `**Next Lecture for Semester 1 (Computer Engineering, Room 3206):**\n\n• Today's upcoming lecture is **Mathematics-I (3110014)** with **Prof. Dr. R. K. Patel** (10:30 AM – 11:30 AM in Classroom 3206), followed by **Basic Electrical Engineering** with **Prof. H. N. Solanki** (11:30 AM – 12:30 PM).\n\n*Classroom: 3206 (3rd Floor, Academic Block 3).*`;
+  }
+  if (q.includes('math') || q.includes('calculus')) {
+    return `**Mathematics-I (Calculus) Details:**\n\n• **Faculty:** Prof. Dr. R. K. Patel (Associate Professor & Head, Cabin G-102)\n• **Mid-Sem Exam Date:** Monday, 27 October 2026\n• **Exam Timing:** 11:00 AM – 12:30 PM (**90 Minutes** duration)\n• **Regular Theory Venue:** Classroom 3206`;
+  }
+  if (q.includes('bee') || q.includes('electrical')) {
+    return `**Basic Electrical Engineering (BEE - 3110005):**\n\n• **Faculty:** Prof. H. N. Solanki (Assistant Professor, Electrical Dept, Cabin E-204)\n• **Mid-Sem Exam Date:** Tuesday, 28 October 2026 (11:00 AM – 12:15 PM, 75 mins)\n• **Practical Lab:** Electrical Machines & Measurement Lab (Electrical Block Ground Floor)`;
+  }
+  if (q.includes('wednesday')) {
+    return `**Wednesday Timetable for Semester 1 Computer Engineering (Room 3206):**\n\n1. **10:30 AM – 11:30 AM:** Programming for Problem Solving [PPS] – Prof. M. P. Shah\n2. **11:30 AM – 12:30 PM:** Basic Electrical Engineering [BEE] – Prof. H. N. Solanki\n3. **12:30 PM – 01:00 PM:** Lunch Recess\n4. **01:00 PM – 02:00 PM:** Mathematics-I – Prof. Dr. R. K. Patel\n5. **02:00 PM – 03:00 PM:** Induction Program / English – Prof. N. J. Mehta\n6. **03:00 PM – 03:15 PM:** Short Tea Break\n7. **03:15 PM – 05:15 PM:** Practical Lab Session:\n   - Batch C: PPS Lab (Lab 3208)\n   - Batch A: BEE Lab (Electrical Block)\n   - Batch B: EGD Hall (Drawing Hall 2)`;
+  }
+  if (q.includes('exam') || q.includes('mid-sem') || q.includes('progressive')) {
+    return `**October 2026 Mid-Semester (Progressive Assessment) Schedule:**\n\n• **27 Oct 2026 (Mon):** Mathematics-I (11:00 AM – 12:30 PM, 90 mins)\n• **28 Oct 2026 (Tue):** Basic Electrical Engineering (11:00 AM – 12:15 PM, 75 mins)\n• **29 Oct 2026 (Wed):** Programming for Problem Solving (11:00 AM – 12:15 PM, 75 mins)\n• **30 Oct 2026 (Thu):** Engineering Graphics & Design (11:00 AM – 12:15 PM, 75 mins)\n• **02 Nov 2026 (Mon):** Environmental Sciences (11:00 AM – 12:15 PM, 75 mins)\n• **03 Nov 2026 (Tue):** Induction / English Elective (11:00 AM – 12:15 PM, 75 mins)\n\n*Seating arrangement is in Classroom 3206 and Block 3 Examination Halls.*`;
+  }
+  if (q.includes('faculty') || q.includes('teacher') || q.includes('prof') || q.includes('who teaches')) {
+    return `**Key Faculty for Semester 1 (Room 3206):**\n\n• **Mathematics-I:** Prof. Dr. R. K. Patel (Cabin G-102)\n• **Basic Electrical Engineering:** Prof. H. N. Solanki (Cabin E-204)\n• **Programming for Problem Solving:** Prof. M. P. Shah (Cabin C-305) & Prof. D. A. Vora\n• **Engineering Graphics & Design:** Prof. K. S. Parmar (Cabin M-108)\n• **Environmental Sciences:** Prof. S. B. Dave (Cabin G-104)\n• **English & Induction:** Prof. N. J. Mehta (Cabin G-106)`;
+  }
+  return `**GEC Bharuch Academic Assistant:**\n\nFor B.E. Semester 1 Computer Engineering, all regular lectures take place in **Classroom 3206** (3rd Floor, Academic Block 3). Mid-Semester examinations begin on **27th October 2026** (Maths-I: 11:00 AM–12:30 PM; others: 11:00 AM–12:15 PM). Feel free to ask about specific subjects, lecture timings, or faculty contact details.`;
+}
+
 // AI Assistant Chat endpoint
 app.post('/api/chat', async (req: Request, res: Response) => {
   try {
@@ -103,24 +126,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
     }
 
     if (!ai) {
-      const q = message.toLowerCase();
-      let reply = '';
-      if (q.includes('next lecture') || q.includes('next class')) {
-        reply = `**Next Lecture for Semester 1 (Computer Engineering, Room 3206):**\n\n• Today's upcoming lecture is **Mathematics-I (3110014)** with **Prof. Dr. R. K. Patel** (10:30 AM – 11:30 AM in Classroom 3206), followed by **Basic Electrical Engineering** with **Prof. H. N. Solanki** (11:30 AM – 12:30 PM).\n\n*Classroom: 3206 (3rd Floor, Academic Block 3).*`;
-      } else if (q.includes('math') || q.includes('calculus')) {
-        reply = `**Mathematics-I (Calculus) Details:**\n\n• **Faculty:** Prof. Dr. R. K. Patel (Associate Professor & Head, Cabin G-102)\n• **Mid-Sem Exam Date:** Monday, 27 October 2026\n• **Exam Timing:** 11:00 AM – 12:30 PM (**90 Minutes** duration)\n• **Regular Theory Venue:** Classroom 3206`;
-      } else if (q.includes('bee') || q.includes('electrical')) {
-        reply = `**Basic Electrical Engineering (BEE - 3110005):**\n\n• **Faculty:** Prof. H. N. Solanki (Assistant Professor, Electrical Dept, Cabin E-204)\n• **Mid-Sem Exam Date:** Tuesday, 28 October 2026 (11:00 AM – 12:15 PM, 75 mins)\n• **Practical Lab:** Electrical Machines & Measurement Lab (Electrical Block Ground Floor)`;
-      } else if (q.includes('wednesday')) {
-        reply = `**Wednesday Timetable for Semester 1 Computer Engineering (Room 3206):**\n\n1. **10:30 AM – 11:30 AM:** Programming for Problem Solving [PPS] – Prof. M. P. Shah\n2. **11:30 AM – 12:30 PM:** Basic Electrical Engineering [BEE] – Prof. H. N. Solanki\n3. **12:30 PM – 01:00 PM:** Lunch Recess\n4. **01:00 PM – 02:00 PM:** Mathematics-I – Prof. Dr. R. K. Patel\n5. **02:00 PM – 03:00 PM:** Induction Program / English – Prof. N. J. Mehta\n6. **03:00 PM – 03:15 PM:** Short Tea Break\n7. **03:15 PM – 05:15 PM:** Practical Lab Session:\n   - Batch C: PPS Lab (Lab 3208)\n   - Batch A: BEE Lab (Electrical Block)\n   - Batch B: EGD Hall (Drawing Hall 2)`;
-      } else if (q.includes('exam') || q.includes('mid-sem') || q.includes('progressive')) {
-        reply = `**October 2026 Mid-Semester (Progressive Assessment) Schedule:**\n\n• **27 Oct 2026 (Mon):** Mathematics-I (11:00 AM – 12:30 PM, 90 mins)\n• **28 Oct 2026 (Tue):** Basic Electrical Engineering (11:00 AM – 12:15 PM, 75 mins)\n• **29 Oct 2026 (Wed):** Programming for Problem Solving (11:00 AM – 12:15 PM, 75 mins)\n• **30 Oct 2026 (Thu):** Engineering Graphics & Design (11:00 AM – 12:15 PM, 75 mins)\n• **02 Nov 2026 (Mon):** Environmental Sciences (11:00 AM – 12:15 PM, 75 mins)\n• **03 Nov 2026 (Tue):** Induction / English Elective (11:00 AM – 12:15 PM, 75 mins)\n\n*Seating arrangement is in Classroom 3206 and Block 3 Examination Halls.*`;
-      } else if (q.includes('faculty') || q.includes('teacher') || q.includes('prof')) {
-        reply = `**Key Faculty for Semester 1 (Room 3206):**\n\n• **Mathematics-I:** Prof. Dr. R. K. Patel (Cabin G-102)\n• **Basic Electrical Engineering:** Prof. H. N. Solanki (Cabin E-204)\n• **Programming for Problem Solving:** Prof. M. P. Shah (Cabin C-305) & Prof. D. A. Vora\n• **Engineering Graphics & Design:** Prof. K. S. Parmar (Cabin M-108)\n• **Environmental Sciences:** Prof. S. B. Dave (Cabin G-104)\n• **English & Induction:** Prof. N. J. Mehta (Cabin G-106)`;
-      } else {
-        reply = `**GEC Bharuch Academic Assistant:**\n\nYou asked: "${message}".\n\nFor B.E. Semester 1 Computer Engineering, all regular lectures are held in **Classroom 3206**. The Mid-Semester Progressive Assessment starts **27th October 2026** (Maths-I: 11:00 AM–12:30 PM; other subjects: 11:00 AM–12:15 PM). You can ask me about your next lecture, any day's timetable, or faculty contact details.`;
-      }
-      res.json({ reply });
+      res.json({ reply: getGroundedCollegeFallback(message) });
       return;
     }
 
@@ -143,22 +149,29 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       parts: [{ text: message }],
     });
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: contents as any,
-      config: {
-        systemInstruction: COLLEGE_SYSTEM_PROMPT,
-      },
-    });
+    try {
+      const genPromise = ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: contents as any,
+        config: {
+          systemInstruction: COLLEGE_SYSTEM_PROMPT,
+        },
+      });
 
-    const reply = response.text || 'I could not generate a response. Please try again.';
-    res.json({ reply });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('AI response timed out')), 3500)
+      );
+
+      const response = await Promise.race([genPromise, timeoutPromise]);
+      const reply = response.text || getGroundedCollegeFallback(message);
+      res.json({ reply });
+    } catch (genErr) {
+      console.warn('Gemini request failed/timed out, using verified college fallback:', genErr);
+      res.json({ reply: getGroundedCollegeFallback(message) });
+    }
   } catch (error: any) {
     console.error('Gemini chat error:', error);
-    res.status(500).json({
-      error: error?.message || 'Failed to generate chat response',
-      details: 'Please check your Gemini API key in Settings > Secrets if this persists.',
-    });
+    res.json({ reply: getGroundedCollegeFallback(req.body?.message || '') });
   }
 });
 
